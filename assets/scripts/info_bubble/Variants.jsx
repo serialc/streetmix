@@ -32,17 +32,11 @@ class Variants extends React.Component {
     super(props)
 
     this.state = {
-      variantSets: this.getVariantSets(props) // should be an array or undefined
+      variantSets: null
     }
   }
 
-  componentWillReceiveProps (nextProps) {
-    this.setState({
-      variantSets: this.getVariantSets(nextProps)
-    })
-  }
-
-  getVariantSets = (props) => {
+  static getDerivedStateFromProps (props, state) {
     let variantSets = []
 
     switch (props.type) {
@@ -61,7 +55,9 @@ class Variants extends React.Component {
     }
 
     // Return the array, removing any empty entries
-    return variantSets.filter((x) => x !== (undefined || null || ''))
+    return {
+      variantSets: variantSets.filter((x) => x !== (undefined || null || ''))
+    }
   }
 
   isVariantCurrentlySelected = (set, selection) => {
