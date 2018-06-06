@@ -500,7 +500,14 @@ class InfoBubble extends React.Component {
     let widthOrHeightControl
     switch (type) {
       case INFO_BUBBLE_TYPE_SEGMENT:
-        widthOrHeightControl = <WidthControl segmentEl={this.segmentEl} position={this.props.position} />
+        widthOrHeightControl = (
+          <WidthControl
+            segmentEl={this.segmentEl}
+            segment={this.state.segment}
+            position={this.props.position}
+            value={(this.state.segment && this.state.segment.width) || null}
+          />
+        )
         break
       case INFO_BUBBLE_TYPE_LEFT_BUILDING:
       case INFO_BUBBLE_TYPE_RIGHT_BUILDING:
