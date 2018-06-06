@@ -44,7 +44,7 @@ class WidthControl extends React.Component {
 
     this.state = {
       isEditing: false,
-      displayValue: prettifyWidth(props.value, props.units)
+      displayValue: null
     }
   }
 
@@ -52,14 +52,17 @@ class WidthControl extends React.Component {
    * If UI is not in user-editing mode, update the display
    * when the value in store changes
    *
-   * @param {Object} nextProps
+   * @param {Object} props
+   * @param {Object} state
    */
-  componentWillReceiveProps (nextProps) {
-    if (!this.state.isEditing) {
-      this.setState({
-        displayValue: prettifyWidth(nextProps.value, nextProps.units)
-      })
+  static getDerivedStateFromProps (props, state) {
+    if (!state.isEditing) {
+      return {
+        displayValue: prettifyWidth(props.value, props.units)
+      }
     }
+
+    return null
   }
 
   /**
@@ -303,11 +306,8 @@ class WidthControl extends React.Component {
 }
 
 function mapStateToProps (state, ownProps) {
-  const segment = state.street.segments[ownProps.position]
   return {
     touch: state.system.touch,
-    segment: segment,
-    value: (segment && segment.width) || null,
     units: state.street.units,
     locale: state.locale.locale
   }
