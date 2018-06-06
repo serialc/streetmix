@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import Transition from 'react-transition-group/Transition'
 import { connect } from 'react-redux'
 import { IntlProvider, FormattedMessage } from 'react-intl'
 import Triangle from './Triangle'
@@ -31,6 +32,23 @@ const DESCRIPTION_HOVER_POLYGON_MARGIN = 200
 
 const MIN_TOP_MARGIN_FROM_VIEWPORT = 120
 const MIN_SIDE_MARGIN_FROM_VIEWPORT = 50
+
+const TRANSITION_DURATION = 150
+const DEFAULT_STYLE = {
+  opacity: 0,
+  transform: 'rotateX(-80deg)',
+  transition: `opacity ${TRANSITION_DURATION}ms, transform ${TRANSITION_DURATION - 50}ms`
+}
+const TRANSITION_STYLES = {
+  entering: {
+    opacity: 1,
+    transform: 'rotateY(0)'
+  },
+  entered: {
+    opacity: 1,
+    transform: 'rotateY(0)'
+  }
+}
 
 class InfoBubble extends React.Component {
   static propTypes = {
@@ -109,6 +127,19 @@ class InfoBubble extends React.Component {
 
     // Cache reference to this element
     this.streetOuterEl = document.querySelector('#street-section-outer')
+  }
+
+  /**
+   * Do not update contents of the InfoBubble while it is not visible (or is
+   * transitioning from visible to not visible). This prevents a UI bug
+   * where the InfoBubble momentarily displays another segment's information
+   * during a transition.
+   *
+   * @param {Object} nextProps
+   * @param {Object} nextState
+   */
+  shouldComponentUpdate (nextProps, nextState) {
+    return !((this.props.visible === false) && (nextProps.visible === false))
   }
 
   getSnapshotBeforeUpdate (prevProps, prevState) {
@@ -491,39 +522,47 @@ class InfoBubble extends React.Component {
     const segment = this.props.street.segments[this.props.dataNo] || {}
 
     return (
-      <div
-        className={classNames.join(' ')}
-        onMouseEnter={this.onMouseEnter}
-        onMouseLeave={this.onMouseLeave}
-        onTouchStart={this.onTouchStart}
-        ref={this.el}
-      >
-        <Triangle highlight={this.state.highlightTriangle} />
-        <header>
-          <div className="info-bubble-header-label">{this.getName()}</div>
-          <RemoveButton enabled={canBeDeleted} segment={this.segmentEl} />
-        </header>
-        <div className="info-bubble-controls">
-          <IntlProvider
-            locale={this.props.locale.locale}
-            messages={this.props.locale.segmentInfo}
+      <Transition in={this.props.visible} timeout={TRANSITION_DURATION}>
+        {(state) => (
+          <div
+            className={classNames.join(' ')}
+            onMouseEnter={this.onMouseEnter}
+            onMouseLeave={this.onMouseLeave}
+            onTouchStart={this.onTouchStart}
+            ref={this.el}
+            style={{
+              ...DEFAULT_STYLE,
+              ...TRANSITION_STYLES[state]
+            }}
           >
-            <Variants type={type} position={position} />
-          </IntlProvider>
-          {widthOrHeightControl}
-        </div>
-        <Warnings segment={segment} />
-        <Description
-          type={segment.type}
-          variantString={segment.variantString}
-          updateBubbleDimensions={this.updateBubbleDimensions}
-          highlightTriangle={this.highlightTriangle}
-          unhighlightTriangle={this.unhighlightTriangle}
-          segmentEl={this.segmentEl}
-          infoBubbleEl={this.el.current}
-          updateHoverPolygon={this.updateHoverPolygon}
-        />
-      </div>
+            <Triangle highlight={this.state.highlightTriangle} />
+            <header>
+              <div className="info-bubble-header-label">{this.getName()}</div>
+              <RemoveButton enabled={canBeDeleted} segment={this.segmentEl} />
+            </header>
+            <div className="info-bubble-controls">
+              <IntlProvider
+                locale={this.props.locale.locale}
+                messages={this.props.locale.segmentInfo}
+              >
+                <Variants type={type} position={position} />
+              </IntlProvider>
+              {widthOrHeightControl}
+            </div>
+            <Warnings segment={segment} />
+            <Description
+              type={segment.type}
+              variantString={segment.variantString}
+              updateBubbleDimensions={this.updateBubbleDimensions}
+              highlightTriangle={this.highlightTriangle}
+              unhighlightTriangle={this.unhighlightTriangle}
+              segmentEl={this.segmentEl}
+              infoBubbleEl={this.el.current}
+              updateHoverPolygon={this.updateHoverPolygon}
+            />
+          </div>
+        )}
+      </Transition>
     )
   }
 }

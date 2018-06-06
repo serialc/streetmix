@@ -4,18 +4,14 @@
   position: absolute;
   border-top-color: darken($ui-colour, 30%);
   min-width: 275px;
-  opacity: 0;
   background: $info-bubble-background;
-  transition: transform 100ms, margin-top 150ms, height 150ms, opacity 150ms;
-  transform: rotateX(-80deg);
+  transition: margin-top 150ms, height 150ms;
   perspective: 1200px;
   z-index: $z-06-info-bubble;
   pointer-events: none;
   touch-action: none;
 
   &.visible {
-    opacity: 1;
-    transform: rotateY(0);
     pointer-events: auto;
   }
 
