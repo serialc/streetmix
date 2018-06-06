@@ -21,7 +21,7 @@ class Variants extends React.Component {
       PropTypes.number,
       PropTypes.oneOf(['left', 'right'])
     ]),
-    variant: PropTypes.string,
+    variantString: PropTypes.string,
     segmentType: PropTypes.string,
     setBuildingVariant: PropTypes.func.isRequired,
     changeSegmentVariant: PropTypes.func.isRequired,
@@ -69,13 +69,13 @@ class Variants extends React.Component {
 
     switch (this.props.type) {
       case INFO_BUBBLE_TYPE_SEGMENT: {
-        const obj = getVariantArray(this.props.segmentType, this.props.variant)
+        const obj = getVariantArray(this.props.segmentType, this.props.variantString)
         bool = (selection === obj[set])
         break
       }
       case INFO_BUBBLE_TYPE_LEFT_BUILDING:
       case INFO_BUBBLE_TYPE_RIGHT_BUILDING:
-        bool = (selection === this.props.variant)
+        bool = (selection === this.props.variantString)
         break
       default:
         bool = false
@@ -209,23 +209,7 @@ class Variants extends React.Component {
 }
 
 function mapStateToProps (state, ownProps) {
-  let variant
-  let segmentType
-
-  // Get the appropriate variant information
-  if (ownProps.position === 'left') {
-    variant = state.street.leftBuildingVariant
-  } else if (ownProps.position === 'right') {
-    variant = state.street.rightBuildingVariant
-  } else if (Number.isInteger(ownProps.position) && state.street.segments[ownProps.position]) {
-    const segment = state.street.segments[ownProps.position]
-    variant = segment.variantString
-    segmentType = segment.type
-  }
-
   return {
-    variant,
-    segmentType,
     flags: state.flags
   }
 }
