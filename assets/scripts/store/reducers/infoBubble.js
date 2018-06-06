@@ -45,7 +45,9 @@ const infoBubble = (state = initialState, action) => {
     case SET_SEGMENT_DATA_NO:
       return {
         ...state,
-        dataNo: action.dataNo
+        dataNo: action.dataNo,
+        // Reset description visibility, as well
+        descriptionVisible: false
       }
     case UPDATE_HOVER_POLYGON:
       return {
