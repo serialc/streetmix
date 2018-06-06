@@ -4,17 +4,17 @@ import { INFO_BUBBLE_TYPE_SEGMENT } from '../info_bubble/constants'
 import { system } from '../preinit/system_capabilities'
 import { setIgnoreStreetChanges } from '../streets/data_model'
 import {
-  SEGMENT_WARNING_OUTSIDE,
-  SEGMENT_WARNING_WIDTH_TOO_SMALL,
-  SEGMENT_WARNING_WIDTH_TOO_LARGE
-} from '../streets/width'
-import {
   DRAGGING_TYPE_NONE,
   draggingResize,
   changeDraggingType,
   removeGuides
 } from './drag_and_drop'
-import { TILE_SIZE } from './constants'
+import {
+  TILE_SIZE,
+  SEGMENT_WARNING_OUTSIDE,
+  SEGMENT_WARNING_WIDTH_TOO_SMALL,
+  SEGMENT_WARNING_WIDTH_TOO_LARGE
+} from './constants'
 import { segmentsChanged } from './view'
 import store from '../store'
 import { updateSegments } from '../store/actions/street'
