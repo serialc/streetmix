@@ -9,22 +9,23 @@ import {
 
 export default class Warnings extends React.Component {
   static propTypes = {
-    segment: PropTypes.object
+    warnings: PropTypes.array
+  }
+
+  static defaultProps = {
+    warnings: []
   }
 
   render () {
-    const segment = this.props.segment
     const messages = []
 
-    if (!segment || !segment.warnings) return null
-
-    if (segment.warnings[SEGMENT_WARNING_OUTSIDE]) {
+    if (this.props.warnings[SEGMENT_WARNING_OUTSIDE]) {
       messages.push(<FormattedMessage id="segments.warnings.does-not-fit" defaultMessage="This segment doesn’t fit within the street." />)
     }
-    if (segment.warnings[SEGMENT_WARNING_WIDTH_TOO_SMALL]) {
+    if (this.props.warnings[SEGMENT_WARNING_WIDTH_TOO_SMALL]) {
       messages.push(<FormattedMessage id="segments.warnings.not-wide" defaultMessage="This segment might not be wide enough." />)
     }
-    if (segment.warnings[SEGMENT_WARNING_WIDTH_TOO_LARGE]) {
+    if (this.props.warnings[SEGMENT_WARNING_WIDTH_TOO_LARGE]) {
       messages.push(<FormattedMessage id="segments.warnings.too-wide" defaultMessage="This segment might be too wide." />)
     }
 

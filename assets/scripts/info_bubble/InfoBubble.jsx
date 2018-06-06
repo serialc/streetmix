@@ -544,7 +544,7 @@ class InfoBubble extends React.Component {
               </IntlProvider>
               {widthOrHeightControl}
             </div>
-            <Warnings segment={this.state.segment} />
+            <Warnings warnings={this.state.segment.warnings} />
             <Description
               type={this.state.segment.type}
               variantString={this.state.variantString}
