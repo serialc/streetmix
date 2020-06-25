@@ -14,6 +14,10 @@ class APIClient {
     return data
   }
 
+  deleteStreetImage = (streetId) => {
+    return this.client.delete(`/streets/images/${streetId}`)
+  }
+
   getGalleryForUser = (userId) => {
     return this.client.get(`/users/${userId}/streets`)
   }
@@ -35,6 +39,7 @@ const client = new APIClient()
 
 export const {
   getStreet,
+  deleteStreetImage,
   getGalleryForUser,
   getGalleryForAllStreets,
   getSentimentSurveyStreet,
