@@ -20,7 +20,8 @@ export const MODES = {
   STREET_404: 15,
   STREET_404_BUT_LINK_TO_USER: 16,
   STREET_410_BUT_LINK_TO_USER: 17,
-  ABOUT: 18
+  ABOUT: 18,
+  SURVEY_FINISHED: 19
 }
 
 let mode
@@ -79,6 +80,9 @@ export function processMode () {
       setServerContacted(false)
       break
     case MODES.JUST_SIGNED_IN:
+      setServerContacted(false)
+      break
+    case MODES.SURVEY_FINISHED:
       setServerContacted(false)
       break
     case MODES.EXISTING_STREET:
