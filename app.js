@@ -13,7 +13,6 @@ const express = require('express')
 const helmet = require('helmet')
 const config = require('config')
 const path = require('path')
-const { v4: uuidv4 } = require('uuid')
 const controllers = require('./app/controllers')
 const requestHandlers = require('./lib/request_handlers')
 const initRedisClient = require('./lib/redis')
@@ -102,16 +101,13 @@ const csp = {
     scriptSrc: [
       "'self'",
       'platform.twitter.com',
-      'https://www.google-analytics.com',
       'cdn.mxpnl.com',
       'streetmix.auth0.com',
       '*.basemaps.cartocdn.com',
       'api.geocode.earth',
       'downloads.mailchimp.com.s3.amazonaws.com',
       'checkout.stripe.com',
-      'plausible.io',
-      (req, res) => "'nonce-" + res.locals.nonce.google_analytics + "'",
-      (req, res) => "'nonce-" + res.locals.nonce.mixpanel + "'"
+      'plausible.io'
     ],
     workerSrc: ["'self'"],
     childSrc: ['platform.twitter.com'],
@@ -119,10 +115,12 @@ const csp = {
     imgSrc: [
       "'self'",
       'data:',
+      // Profile images
       'pbs.twimg.com',
       'syndication.twitter.com',
       's.gravatar.com',
-      'https://www.google-analytics.com',
+      // Auth0 default profile images
+      'https://i0.wp.com/cdn.auth0.com/',
       '*.basemaps.cartocdn.com',
       'https://res.cloudinary.com/',
       '*.stripe.com'
@@ -130,19 +128,27 @@ const csp = {
     fontSrc: ["'self'", 'fonts.gstatic.com', '*.typekit.net'],
     connectSrc: [
       "'self'",
-      'api.mixpanel.com',
       'api.geocode.earth',
       'syndication.twitter.com',
-      'https://www.google-analytics.com',
       'sentry.io',
       'streetmix.auth0.com',
       'checkout.stripe.com',
       'plausible.io'
-    ]
-  }
+    ],
+    reportUri: '/services/csp-report/'
+  },
+  // Report (but do not block) CSP violations in development mode.
+  // This allows developers to work on new or experimental features without
+  // worrying about modifying CSP headers.
+  // !! WARNING !!
+  // Reported CSP violations should be addressed before releasing to
+  // production. IF A NEW FEATURE IS REPORTING A CSP VIOLATION, IT WILL
+  // FAIL IN PRODUCTION, EVEN THOUGH IT WORKS IN DEVELOPMENT MODE.
+  reportOnly: app.locals.config.env === 'development'
 }
 
-// Allows websockets for hot-module reloading (note: ports are assigned randomly by Parcel)
+// Allows websockets for hot-module reloading
+// (note: ports are assigned randomly by Parcel)
 if (app.locals.config.env === 'development') {
   csp.directives.scriptSrc.push("'unsafe-eval'")
   csp.directives.connectSrc.push('ws:')
@@ -163,8 +169,7 @@ app.use(requestHandlers.request_id_echo)
 app.use((req, res, next) => {
   // Generate nonces for inline scripts
   res.locals.nonce = {
-    google_analytics: uuidv4(),
-    mixpanel: uuidv4()
+    // Currently: we use none
   }
 
   // Set default metatag information for social sharing cards
